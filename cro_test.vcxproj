@@ -62,6 +62,9 @@
     <Link>
       <AdditionalDependencies>cro_asm.obj;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PreLinkEvent>
+      <Command>nasm $(SolutionDir)src/win64.asm -f win64 -o build/asm/x64/cro_asm.obj</Command>
+    </PreLinkEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -76,12 +79,20 @@
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalDependencies>cro_asm.obj;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PreLinkEvent>
+      <Command>nasm $(SolutionDir)src/win64.asm -f win64 -o build/asm/x64/cro_asm.obj</Command>
+    </PreLinkEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="include\cro\fiber.h" />
+    <ClCompile Include="src\FiberContext.cpp" />
+    <ClCompile Include="src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\main.cpp" />
+    <ClInclude Include="include\cro\FiberContext.h" />
+    <ClInclude Include="include\cro\FiberContext_Win64.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="src\win64.asm" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
