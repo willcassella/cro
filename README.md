@@ -1,7 +1,7 @@
 # cro
 #### Coroutines/Fibers for C++
 
-After spending some time trying to learn assembly, I wanted to actually make use of it by writed something that _couldn't_ be implemented
+After spending some time trying to learn assembly, I wanted to actually make use of it by writing something that _couldn't_ be implemented
 in standard C or C++: coroutines.
 
 There is currenly a technical specification for making coroutines an official part of the C++ language, but that is for stackless
