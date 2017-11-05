@@ -15,6 +15,7 @@ Planned features:
 - System V ABI support (Linux, Mac)
 - Investigate WASM support (may not be possible yet)
 - Argument support
+- Performance improvements
 - Yield wrapper library
 - Job-based parallelism wrapper library
 - Support early destruction of coroutine objects
