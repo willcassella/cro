@@ -6,8 +6,7 @@
 namespace cro
 {
     struct FiberContext_Win64 {
-        /* Basic pointers (return address, stack, base) */
-        void const* ret;
+        /* Basic pointers (stack, base) */
         void* rsp;
         void* rbp;
 

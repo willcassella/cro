@@ -4,33 +4,44 @@
 #include <stdlib.h>
 #include "../include/cro/FiberContext.h"
 
-void test_coroutine()
+struct RAII {
+    ~RAII() {
+        printf("Destructor called\n");
+    }
+};
+
+void test_coroutine(void* const arg)
 {
-    printf("Coroutine started\n");
+    puts("Coroutine started");
+    RAII raii;
+
+    int* const out = (int*)arg;
 
     for (int i = 0; i < 5; ++i)
     {
         printf("i = %d\n pausing coroutine...\n", i);
 
         /* Pause the current function! */
+        *out = i;
         cro::suspend();
 
-        printf("...coroutine resumed\n");
+        puts("...coroutine resumed");
     }
 
-    printf("Coroutine finished\n");
+    puts("Coroutine finished");
 }
 
 int main()
 {
     /* Initialize a coroutine */
     void* stack = malloc(1024 * 64);
-    auto ctx = cro::init_fiber_context(stack, 1024 * 64, test_coroutine);
+    int i = 0;
+    auto ctx = cro::init_fiber_context(stack, 1024 * 64, test_coroutine, &i);
 
     // Keep calling until completion
-    while (cro::resume(&ctx));
+    while (cro::resume(ctx, nullptr))
     {
-        printf("Back in main\n");
+        puts("Back in main");
     }
 
     getchar();

@@ -11,18 +11,29 @@ namespace cro
 #   error Compiling cro on unsupported platform
 #endif
 
-    using Coroutine = void();
+    using Coroutine = void(void*);
+
+    enum SuspendResult {
+        SR_CONTINUE = 0,
+        SR_UNWIND = 1,
+    };
 
     FiberContext init_fiber_context(
         void* stack,
         size_t stack_size,
-        Coroutine* coroutine
+        Coroutine coroutine,
+        void* arg
     );
 
     int resume(
-        FiberContext* fiber_ctx
+        FiberContext& fiber_ctx,
+        void* userdata
     );
 
-    void suspend(
+    SuspendResult suspend(
+    );
+
+    void unwind(
+        FiberContext& fiber_ctx
     );
 }
