@@ -8,17 +8,18 @@ There is currenly a technical specification for making coroutines an official pa
 coroutines which make different tradeoffs than stackful ones do, and having both at your disposal is useful.
 
 Current features:
-- Ability to treat any argument-less, return-less function as a coroutine
+- Ability to treat any function with a single void* argument and without a return type function as a coroutine
 - Windows x64 support
+
+Almost current features:
+- Early destruction of coroutine objects *(Should work, but having problems...)
 
 Planned features:
 - System V ABI support (Linux, Mac)
 - Investigate WASM support (may not be possible yet)
-- Argument support
 - Performance improvements
 - Yield wrapper library
 - Job-based parallelism wrapper library
-- Support early destruction of coroutine objects
 
 Not planned features:
-- x86 support
+- x86_32 support

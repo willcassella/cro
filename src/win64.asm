@@ -51,16 +51,6 @@ cro_asm_init:
 
 cro_asm_resume:
 ; Pre: rcx = cro_ThreadContext*, rdx = cro::FiberContext_Win64*, r8 = userdata, r9d = should_unwind
-    ; Save non-volatile from outer to stack
-    push rbp
-    push rbx
-    push rdi
-    push rsi
-    push r12
-    push r13
-    push r14
-    push r15
-
     ; Back up existing thread context
     push qword [rcx]
     push qword [rcx + 8]
@@ -71,7 +61,17 @@ cro_asm_resume:
     mov qword [rcx + 8], rsp
     mov qword [rcx + 16], r8
 
-    ; Restore non-volatile registers from fiber
+    ; Save non-volatile from outer to stack
+    mov qword [rsp - 8], rbp
+    mov qword [rsp - 16], rbx
+    mov qword [rsp - 24], rdi
+    mov qword [rsp - 32], rsi
+    mov qword [rsp - 40], r12
+    mov qword [rsp - 56], r14
+    mov qword [rsp - 48], r13
+    mov qword [rsp - 64], r15
+
+    ; Restore non-volatile from FiberContext
     mov rsp, qword [rdx]
     mov rbp, qword [rdx + 8]
     mov rbx, qword [rdx + 16]
@@ -81,6 +81,9 @@ cro_asm_resume:
     mov r13, qword [rdx + 48]
     mov r14, qword [rdx + 56]
     mov r15, qword [rdx + 64]
+
+    ; Set fiber stack pointer to null (sanity check, ensure nobody else tries to schedule this fiber until it's suspended)
+    mov qword [rdx], 0
 
     ; Call back into fiber code
     mov eax, r9d
@@ -108,25 +111,25 @@ cro_asm_suspend:
 ; Post: eax = return code (1), rcx = cro_ThreadContext*
 
 cro_restore_outer:
-; Pre: rax = return code, rcx = cro_ThreadContext*
+; Pre: eax = return code, rcx = cro_ThreadContext*
     ; Restore outer stack pointer
     mov rsp, qword [rcx + 8]
+
+    ; Restore outer's non-volatile from stack
+    mov r15, qword [rsp - 64]
+    mov r14, qword [rsp - 56]
+    mov r13, qword [rsp - 48]
+    mov r12, qword [rsp - 40]
+    mov rsi, qword [rsp - 32]
+    mov rdi, qword [rsp - 24]
+    mov rbx, qword [rsp - 16]
+    mov rbp, qword [rsp - 8]
 
     ; Restore previous thread context
     pop qword [rcx + 16]
     pop qword [rcx + 8]
     pop qword [rcx]
 
-    ; Restore outer's non-volatile from stack
-    pop r15
-    pop r14
-    pop r13
-    pop r12
-    pop rsi
-    pop rdi
-    pop rbx
-    pop rbp
-
     ; Return to outer
     ret
-; Post: eax = return code, back in outer state
+; Post: eax = return code
