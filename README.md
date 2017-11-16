@@ -8,7 +8,7 @@ There is currenly a technical specification for making coroutines an official pa
 coroutines which make different tradeoffs than stackful ones do, and having both at your disposal is useful.
 
 Current features:
-- Ability to treat any function with a single void* argument and without a return type function as a coroutine
+- Ability to treat any function with a single void* argument and without a return type function as a coroutine/fiber entry point
 - Windows x64 support
 
 Almost current features:
@@ -17,8 +17,6 @@ Almost current features:
 Planned features:
 - System V ABI support (Linux, Mac)
 - Investigate WASM support (may not be possible yet)
-- Performance improvements
-- Yield wrapper library
 - Job-based parallelism wrapper library
 
 Not planned features:
