@@ -10,7 +10,7 @@ struct RAII {
     }
 };
 
-void test_coroutine(void* const arg)
+void test_fiber_fn(void* const arg)
 {
     puts("Coroutine started");
     RAII raii;
@@ -33,17 +33,17 @@ void test_coroutine(void* const arg)
 
 int main()
 {
-    /* Initialize a coroutine */
+    /* Initialize a fiber */
     void* stack = malloc(1024 * 64);
     int i = 0;
-    auto ctx = cro::init_fiber_context(stack, 1024 * 64, test_coroutine, &i);
+    auto ctx = cro::init_fiber_context(stack, 1024 * 64, test_fiber_fn, &i);
 
     // Keep calling until completion
-    while (cro::resume(ctx, nullptr))
+    while (cro::resume(ctx, cro::SR_CONTINUE))
     {
         puts("Back in main");
     }
 
-    getchar();
     free(stack);
+    getchar();
 }

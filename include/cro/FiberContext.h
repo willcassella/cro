@@ -1,17 +1,26 @@
 // FiberContext.h
 #pragma once
 
-#include "FiberContext_Win64.h"
-
 namespace cro
 {
-#ifdef _WIN64
-    using FiberContext = FiberContext_Win64;
-#else
-#   error Compiling cro on unsupported platform
-#endif
+    enum class FiberState
+    {
+        FINISHED,
+        NOT_STARTED,
+        RUNNING,
+        SUSPENDED,
+    };
 
-    using Coroutine = void(void*);
+    struct FiberContext
+    {
+        /* All platform-specific registers are stored on the stack. */
+        void* stack_pointer = nullptr;
+
+        /* Current state of this fiber */
+        FiberState state = FiberState::FINISHED;
+    };
+
+    using FiberFn = void(void*);
 
     enum SuspendResult {
         SR_CONTINUE = 0,
@@ -21,19 +30,15 @@ namespace cro
     FiberContext init_fiber_context(
         void* stack,
         size_t stack_size,
-        Coroutine coroutine,
+        FiberFn* fiber_fn,
         void* arg
     );
 
-    int resume(
+    bool resume(
         FiberContext& fiber_ctx,
-        void* userdata
+        SuspendResult should_unwind = SR_CONTINUE
     );
 
-    SuspendResult suspend(
-    );
-
-    void unwind(
-        FiberContext& fiber_ctx
+    void suspend(
     );
 }

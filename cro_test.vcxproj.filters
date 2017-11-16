@@ -22,13 +22,13 @@
     <ClInclude Include="include\cro\FiberContext.h">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="include\cro\FiberContext_Win64.h">
+    <ClInclude Include="include\cro\Job.h">
       <Filter>include</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="src\win64.asm">
+    <MASM Include="src\win64_masm.asm">
       <Filter>src</Filter>
-    </None>
+    </MASM>
   </ItemGroup>
 </Project>
