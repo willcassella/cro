@@ -82,6 +82,17 @@ cro_asm_switch proc
     movdqu xmmword ptr [rsp + 16], xmm14
     movdqu xmmword ptr [rsp], xmm15
 
+    ; Save NT_TIB
+    mov rax, qword ptr gs:[30h]
+    mov rbx, qword ptr [rax + 20h] ; Fiber local storage
+    push rbx
+    mov rbx, qword ptr [rax + 1478h] ; Current deallocation stack
+    push rbx
+    mov rbx, qword ptr [rax + 10h] ; Current stack limit
+    push rbx
+    mov rbx, qword ptr [rax + 8h] ; Current stack base
+    push rbx
+
     ; Save stack pointer
     mov qword ptr [rcx], rsp
 ; Post: rdx = to:cro::FiberContext*, r8d = should_unwind:cro::SuspendResult
@@ -93,6 +104,17 @@ cro_asm_restore label ptr
 
     ; Null out the stack pointer to ensure they don't end up re-resuming this fiber accidentally
     mov qword ptr [rdx], 0
+
+    ; Load NT_TIB
+    mov rax, qword ptr gs:[30h]
+    pop rbx
+    mov qword ptr [rax + 8h], rbx ; Current stack base
+    pop rbx
+    mov qword ptr [rax + 10h], rbx ; Current stack limit
+    pop rbx
+    mov qword ptr [rax + 1478h], rbx ; Curent deallocation stack
+    pop rbx
+    mov qword ptr [rax + 20h], rbx ; Fiber local storage
 
     ; Restore xmm registers
     movdqu xmm15, xmmword ptr [rsp]
